@@ -1,7 +1,7 @@
 import os
 import google.generativeai as genai
 
-from fastapi import FastAPI, HTTPException, Request
+from fastapi import FastAPI, HTTPException, Request, Response
 from fastapi.middleware.cors import CORSMiddleware
 from pydantic import BaseModel, Field
 
@@ -107,6 +107,17 @@ class ChatRequest(BaseModel):
     question: str = Field(..., min_length=1, description="The user's question to the bot.")
 
 
+
+
+
+@app.get("/", include_in_schema=False)
+async def root():
+    return {"status": "OK"}
+
+@app.head("/", include_in_schema=False)
+async def root_head():
+    return Response(status_code=200)
+
 # --- API Endpoint ---
 @app.post("/api/chat")
 async def chat_with_bot(request: ChatRequest):
@@ -133,7 +144,4 @@ async def chat_with_bot(request: ChatRequest):
         raise HTTPException(status_code=500, detail="Failed to get a response from the AI model.")
 
 
-# --- Health Check Endpoint ---
-@app.get("/")
-def read_root():
-    return {"status": "ok"}
+
